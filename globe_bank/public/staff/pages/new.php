@@ -1,0 +1,135 @@
+<?php
+require_once('../../../private/initialize.php');
+
+
+
+if(is_post_request()){
+
+    $page = [];
+    // read values that have been submitted by a form 
+    $page['subject_id'] = $_POST['subject_id'] ?? '';
+    $page['menu_name'] = $_POST['menu_name'] ?? '';
+    $page['position'] = $_POST['position'] ?? '';
+    $page['visible'] = $_POST['visible'] ?? '';
+    $page['content'] = $_POST['content'] ?? '';
+
+    $result = insert_page($page);
+    
+    if($result === true){
+         //if true redirect user to show.php and show new data 
+         $new_id = mysqli_insert_id($db);
+         redirect_to(url_for('/staff/pages/show.php?id=' . $new_id));
+    }else{
+        $errors = $result;
+    }
+    
+    
+    
+}else{
+    
+    
+    //instantiate new page model
+    $page = [];
+    $page['subject_id'] = '';
+    $page['menu_name'] = '';
+    $page['position'] = '';
+    $page['visible'] = '';
+    $page['content'] = '';
+        
+}
+
+$page_set = find_all_pages();
+$page_count = mysqli_num_rows($page_set) + 1;
+mysqli_free_result($page_set);
+
+?>
+
+
+<?php $page_title = 'Create Page'; ?>
+<?php include(SHARED_PATH . '/staff_header.php'); ?>
+
+<div id="content">
+  <a class="back-link" href="<?php echo 
+  url_for('/staff/pages/index.php'); ?>">&laquo; Back to List</a>
+  
+    <div class="subject new">
+      <h1>Create Page</h1>
+      
+      <?php echo display_errors($errors); ?>
+      
+      <form action="<?php echo 
+        url_for('/staff/pages/new.php'); ?>" method="POST">
+          
+          <dl>
+              <dt>Subject</dt>
+              <dd>
+                  <select name="subject_id">
+                    <?php  
+                      $subject_set = find_all_subjects();
+                      while($subject = mysqli_fetch_assoc($subject_set)) {
+                          echo "<option value=\"" . h($subject['id']) . "\"";
+                          if($page["subject_id"] == $subject['id']) {
+                              echo "selected";
+                          }
+                          echo ">" . h($subject['menu_name']) . "</option>";
+                      }
+                      mysqli_free_result($subject_Sset);
+                    ?>          
+                  </select>
+              </dd>
+          </dl>
+          
+          <!-- dl(data list) tag defines description list -->
+          <dl>
+               <!-- dt(data term) tag defines terms/names -->
+              <dt>Menu Name</dt>
+               <!-- dd(data definition) tag defines each term/name -->
+               <dd><input type="text" name="menu_name" value="<?php echo 
+               h($page['menu_name']); ?>"/></dd>
+          </dl>
+          
+          <dl>
+              <dt>Position</dt>
+              <dd>
+                  <select name="position">
+                       <?php
+                      //loop through a series of options and check if
+                      //position is equal to current value
+                      for($i=1; $i <= $page_count; $i++){
+                          echo "<option value=\"{$i}\"";
+                          if($page["position"] == $i){
+                              echo " selected";
+                          }
+                          echo ">{$i}</option>";
+                      }
+                      ?>
+                  </select>
+              </dd>
+          </dl>
+          
+          <dl>
+              <dt>Visible</dt>
+              <dd>
+                  <!-- if box is unchecked send false -->
+                  <input type="hidden" name="visible" value="0"/>
+                  <!-- if box is checked send true -->
+                  <input type="checkbox" name="visible" value="1"/>
+              </dd>
+          </dl>
+          
+          <dl>
+              <dt>Content</dt>
+              <dd>
+                <textarea name="content" cols="60" rows="10"><?php echo h($page['content']); ?></textarea>
+              </dd>
+          </dl>
+          
+          <div id="operations">
+              <input type="submit" value="Create Page" />
+          </div>
+      </form>
+      
+      
+    </div>  
+    
+</div>

@@ -1,0 +1,73 @@
+<?php
+    
+function url_for($script_path) {
+  // add the leading '/' if not present
+  if($script_path[0] != '/') {
+    $script_path = "/" . $script_path;
+  }
+  return WWW_ROOT . $script_path;
+}
+
+//shorten our urlencode for easier usage
+function u($string=""){
+    return urlencode($string);
+}
+
+//shorten our rawurlencode for easier usage
+function raw_u($string=""){
+    return rawurlencode($string);
+}
+
+//shorten our htmlspecialchars for easier usage that protects 
+//us from cross site scripting attacks 
+function h($string=""){
+    return htmlspecialchars($string);
+}
+
+function error_404() {
+    //using the 404 error with required built in header function
+    header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+    //quit and dont do any additional PHP
+    exit();
+}
+
+function error_500() {
+    //using the 500 error with required built in header function
+     header($_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error");
+    //quit and dont do any additional PHP
+    exit();
+}
+
+function redirect_to($location){
+    header("Location: " . $location); 
+    exit();
+}
+
+//checking if form request is POST
+function is_post_request(){
+    return $_SERVER['REQUEST_METHOD'] == 'POST';
+}
+
+//checking if form request is GET
+function is_get_request(){
+    return $_SERVER['REQUEST_METHOD'] == 'GET';
+}
+
+//show form validation errors 
+function display_errors($errors=array()){
+    $output = '';
+    if(!empty($errors)) {
+        $output .= "<div class=\"errors\">";
+        $output .= "Please fix the following errors:";
+        $output .= "<ul>";
+        foreach($errors as $error){
+            $output .= "<li>" . h($error) . "</li>";
+        }
+        $output .= "</ul>";
+        $output .= "</div>";
+    }
+    
+    return $output;
+}
+
+?>
