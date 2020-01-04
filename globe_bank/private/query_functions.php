@@ -23,30 +23,6 @@ function find_all_subjects(){
     return $result;
 }
 
-//returns a single subject row from database 
-function find_subject_by_id($id){
-   
-    global $db;  //access $db variable to be used in function scope
-    
-    $sql = "SELECT * FROM subjects ";
-
-    //concatenate line with .= 
-    //always put single quotes around values good practise to prevent SQL injection
-    $sql .= "WHERE id='" . db_escape($db, $id) ."'"; //db_escape is a function inside database.php to prevent SQL injection
-   
-    $result = mysqli_query($db, $sql);
-    
-    confirm_result_set($result); //test if query failed 
-    
-     
-    $subject = mysqli_fetch_assoc($result); //grab returned data
-    
-    mysqli_free_result($result); //release returned data
-    
-    return $subject; //return an associative array 
-    
-}
-
 function find_all_pages(){
     //access $db variable to be used in function scope
     global $db;
@@ -70,6 +46,60 @@ function find_all_pages(){
     return $result;
 }
 
+//returns a single subject row from database 
+function find_subject_by_id($id){
+   
+    global $db;  //access $db variable to be used in function scope
+    
+    $sql = "SELECT * FROM subjects ";
+
+    //concatenate line with .= 
+    //always put single quotes around values good practise to prevent SQL injection
+    $sql .= "WHERE id='" . db_escape($db, $id) ."'"; //db_escape is a function inside database.php to prevent SQL injection
+   
+    $result = mysqli_query($db, $sql);
+    
+    confirm_result_set($result); //test if query entire result failed 
+    
+     
+    $subject = mysqli_fetch_assoc($result); //grab returned data as associative array
+    
+    mysqli_free_result($result); //release returned data
+    
+    return $subject; //return an associative array 
+    
+}
+
+function find_page_by_id($id){
+    
+    global $db;
+    
+    $sql = "SELECT * FROM pages ";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
+    $result = mysqli_query($db, $sql);
+    
+    confirm_result_set($result);
+    
+    $page = mysqli_fetch_assoc($result);
+    
+     mysqli_free_result($result);
+    
+    return $page;
+}
+
+function find_pages_by_subject_id($subject_id){
+    
+    global $db;
+    
+    $sql = "SELECT * FROM pages ";
+    $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
+    $sql .= "ORDER BY position ASC";
+    $result = mysqli_query($db, $sql);
+    
+    confirm_result_set($result);
+    
+    return $result;
+}
 
 function insert_subject($subject){
     
@@ -87,6 +117,41 @@ function insert_subject($subject){
     $sql .=  "'" . db_escape($db, $subject['menu_name']) . "',"; //single quotes prevent SQL injections
     $sql .=  "'" . db_escape($db, $subject['position']) . "',";
     $sql .=  "'" . db_escape($db, $subject['visible']) . "'";
+    $sql .= ")";
+    
+    //for INSERT statements result is true/false
+    $result = mysqli_query($db, $sql);
+    
+    //check insert connection
+    if($result){
+        return true;   
+    }else{
+        //failed
+        echo mysqli_error($db);
+        db_disconnect($db);
+        exit;
+    }
+    
+}
+
+function insert_page($page){
+    
+    global $db;
+    
+    $errors = validate_page($page);
+    
+    if(!empty($errors)){
+        return $errors;
+    }
+    
+    $sql = "INSERT INTO pages ";
+    $sql .= "(subject_id, menu_name, position, visible, content) ";
+    $sql .= "VALUES (";
+    $sql .=  "'" . db_escape($db, $page['subject_id']) . "',";
+    $sql .=  "'" . db_escape($db, $page['menu_name']) . "',"; //single quotes prevent SQL injections
+    $sql .=  "'" . db_escape($db, $page['position']) . "',";
+    $sql .=  "'" . db_escape($db, $page['visible']) . "',";
+    $sql .=  "'" . db_escape($db, $page['content']) . "'";
     $sql .= ")";
     
     //for INSERT statements result is true/false
@@ -208,59 +273,6 @@ function delete_page($id){
     db_disconnect($db);
      exit;
     }
-}
-
-
-function find_page_by_id($id){
-    
-    global $db;
-    
-    $sql = "SELECT * FROM pages ";
-    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
-    $result = mysqli_query($db, $sql);
-    
-    confirm_result_set($result);
-    
-    $page = mysqli_fetch_assoc($result);
-    
-     mysqli_free_result($result);
-    
-    return $page;
-}
-
-function insert_page($page){
-    
-    global $db;
-    
-    $errors = validate_page($page);
-    
-    if(!empty($errors)){
-        return $errors;
-    }
-    
-    $sql = "INSERT INTO pages ";
-    $sql .= "(subject_id, menu_name, position, visible, content) ";
-    $sql .= "VALUES (";
-    $sql .=  "'" . db_escape($db, $page['subject_id']) . "',";
-    $sql .=  "'" . db_escape($db, $page['menu_name']) . "',"; //single quotes prevent SQL injections
-    $sql .=  "'" . db_escape($db, $page['position']) . "',";
-    $sql .=  "'" . db_escape($db, $page['visible']) . "',";
-    $sql .=  "'" . db_escape($db, $page['content']) . "'";
-    $sql .= ")";
-    
-    //for INSERT statements result is true/false
-    $result = mysqli_query($db, $sql);
-    
-    //check insert connection
-    if($result){
-        return true;   
-    }else{
-        //failed
-        echo mysqli_error($db);
-        db_disconnect($db);
-        exit;
-    }
-    
 }
 
 function validate_subject($subject){
