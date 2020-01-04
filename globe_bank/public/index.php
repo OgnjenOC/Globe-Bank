@@ -9,6 +9,14 @@
     
     <div id="page">
         
+        <?php 
+        //show the home page 
+        //homepage content could:
+        // * be static content (here or in shared folder)
+        // * show the first page from the nav
+        // * be in the database but add code to hide in the nav
+        include(SHARED_PATH . '/static_homepage.php'); ?>
+        
     </div>
 </div>
 
