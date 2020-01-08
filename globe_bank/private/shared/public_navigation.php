@@ -19,13 +19,14 @@
                 <ul class="pages">
                   <?php while($nav_page = mysqli_fetch_assoc($nav_pages)) {?>
                   <li>
-                    <a href="<?php echo url_for('index.php'); ?>">
+                    <!-- send the URL parameter from a nav page to a database to read a page content  -->  
+                    <a href="<?php echo url_for('index.php?id='. h(u($nav_page['id']))); ?>">
                     <?php echo h($nav_page['menu_name']); ?>
                     </a>
                   </li>
         
                 <?php } // while $nav_pages ?>
-                </ul>
+                </ul>`
             
       </li>
         
