@@ -1,12 +1,21 @@
 <?php
 
-function find_all_subjects(){
+function find_all_subjects($options=[]){
     //access $db variable to be used in function scope
     global $db;
+    
+    //check passed values
+    $visible = $options['visible'] ?? false;
     
     //retrieve subjects data from data base using mysqli
     //must have space at the end of line if we are concatenating
     $sql = "SELECT * FROM subjects ";
+    
+    //retrieve only visible = true subjects
+    if($visible){
+        $sql .= "WHERE visible = true ";
+    }
+    
     //concatenate line with .= 
     $sql .= "ORDER BY position ASC";
     //echo $sql; is a good practise to troubleshoot query created
@@ -87,12 +96,20 @@ function find_page_by_id($id){
     return $page;
 }
 
-function find_pages_by_subject_id($subject_id){
+function find_pages_by_subject_id($subject_id, $options=[]){
     
     global $db;
     
+    //check passed values
+    $visible = $options['visible'] ?? false;
+    
     $sql = "SELECT * FROM pages ";
     $sql .= "WHERE subject_id='" . db_escape($db, $subject_id) . "' ";
+    
+    //retrieve only visible = true subjects
+    if($visible){
+        $sql .= "AND visible = true ";
+    }
     $sql .= "ORDER BY position ASC";
     $result = mysqli_query($db, $sql);
     
