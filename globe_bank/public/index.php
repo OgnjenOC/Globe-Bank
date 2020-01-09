@@ -49,9 +49,8 @@
         
         //if we found a page selected from nav display page information
         if(isset($page)){
-           //show the page from a database
-           //TODO add html escaping back in  
-           echo $page['content']; 
+           $allowed_tags = '<div><h1><img><h2><p><br><strong><em><ul><li>'; //tags specified to use
+           echo strip_tags($page['content'], $allowed_tags); //show the page from a database 
         }else{
           //show the home page 
           //homepage content could:
