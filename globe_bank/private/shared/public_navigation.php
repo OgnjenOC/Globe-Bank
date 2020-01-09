@@ -2,6 +2,7 @@
   //default values to prevent errors
   $page_id = $page_id ?? '';
   $subject_id = $subject_id ?? '';
+  $visible = $visible ?? true;
 ?>
 
 
@@ -9,7 +10,7 @@
      
     <?php 
     //returns all the subjects from a database
-    $nav_subjects = find_all_subjects(['visible' => true]); 
+    $nav_subjects = find_all_subjects(['visible' => $visible]); 
     
     ?>
     <ul class="subjects">

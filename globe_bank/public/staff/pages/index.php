@@ -6,7 +6,6 @@ require_once('../../../private/initialize.php');
 
 ?>
 
-
 <?php
     //use function logic(query_functions.php) 
     //to access database and retrieve pages data 
@@ -64,7 +63,7 @@ include(SHARED_PATH . '/staff_header.php');
           url_for('staff/pages/show.php?id= ' . h(u($page['id'])));
           ?>">View</a></td>
           <td><a class="action" href="<?php echo 
-          //look up for the id number selceted for updating 
+          //look up for the id number selected for updating 
           url_for('/staff/pages/edit.php?id=' . h(u($page['id']))); ?>">Edit</a></td>
           <td><a class="action" href="<?php echo 
             url_for('/staff/pages/delete.php?id=' . h(u($page['id']))); ?>">Delete</a></td>
