@@ -56,16 +56,24 @@ function find_all_pages(){
 }
 
 //returns a single subject row from database 
-function find_subject_by_id($id){
+function find_subject_by_id($id, $options=[]){
    
     global $db;  //access $db variable to be used in function scope
+    
+    //check passed values
+    $visible = $options['visible'] ?? false;
     
     $sql = "SELECT * FROM subjects ";
 
     //concatenate line with .= 
     //always put single quotes around values good practise to prevent SQL injection
-    $sql .= "WHERE id='" . db_escape($db, $id) ."'"; //db_escape is a function inside database.php to prevent SQL injection
-   
+    $sql .= "WHERE id='" . db_escape($db, $id) ."' "; //db_escape is a function inside database.php to prevent SQL injection
+    
+    //retrieve only visible = true subjects
+    if($visible){
+        $sql .= "AND visible = true";
+    }
+    
     $result = mysqli_query($db, $sql);
     
     confirm_result_set($result); //test if query entire result failed 
@@ -79,12 +87,19 @@ function find_subject_by_id($id){
     
 }
 
-function find_page_by_id($id){
+function find_page_by_id($id, $options=[]){
     
     global $db;
+   
+    //check passed values
+    $visible = $options['visible'] ?? false;
     
     $sql = "SELECT * FROM pages ";
-    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
+    //retrieve only visible = true subjects
+    if($visible){
+        $sql .= "AND visible = true";
+    }
     $result = mysqli_query($db, $sql);
     
     confirm_result_set($result);
