@@ -70,4 +70,23 @@ function display_errors($errors=array()){
     return $output;
 }
 
+//checks to see if there is a message set and if is not empty
+//assigns the value to a variable $msg 
+//unset the SESSION and returns a session message variable
+function get_and_clear_session_message(){
+  if(isset($_SESSION['message']) && $_SESSION['message'] != ''){
+      $msg = $_SESSION['message'];
+      unset($_SESSION['message']);
+      return $msg;
+  }
+}
+
+//display the session status message on the page
+function display_session_message(){
+    $msg = get_and_clear_session_message();
+    if(!is_blank($msg)){
+        return '<div id="message">' . h($msg) . '</div>';
+    }
+}
+
 ?>
